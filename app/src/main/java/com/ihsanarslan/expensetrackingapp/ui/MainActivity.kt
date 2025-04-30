@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.ihsanarslan.expensetrackingapp.navigation.NavigationGraph
+import com.ihsanarslan.expensetrackingapp.navigation.Screen
 import com.ihsanarslan.expensetrackingapp.navigation.Screen.Auth
 import com.ihsanarslan.expensetrackingapp.ui.auth.RegisterScreen
 import com.ihsanarslan.expensetrackingapp.ui.theme.MyappTheme
@@ -22,16 +23,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyappTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    val navController = rememberNavController()
-//                    val startDestination = Auth
-//                    NavigationGraph(
-//                        navController = navController,
-//                        startDestination = startDestination,
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-                RegisterScreen()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val navController = rememberNavController()
+                    val startDestination = Screen.Login
+                    NavigationGraph(
+                        navController = navController,
+                        startDestination = startDestination,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }

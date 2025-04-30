@@ -11,21 +11,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.ihsanarslan.expensetrackingapp.navigation.Screen
 
 @Composable
-fun RegisterScreen(){
+fun RegisterScreen(navController : NavController){
 
     val viewModel = hiltViewModel<AuthViewModel>()
+
+    val isUserAuthenticated = viewModel.isAuthenticated.collectAsStateWithLifecycle()
 
     val mail = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val passwordConfirmation = remember { mutableStateOf("") }
+
+    LaunchedEffect(isUserAuthenticated.value) {
+
+        if (isUserAuthenticated.value){
+            navController.navigate(Screen.Home)
+        }
+    }
+
 
     Column(modifier = Modifier.fillMaxSize().padding(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,10 +73,10 @@ fun RegisterScreen(){
         }
         TextButton(
             onClick = {
-                // Navigate to LoginScreen
+                navController.navigate(Screen.Login)
             }
         ) {
-            Text(text = "Register")
+            Text(text = "Login")
         }
     }
 }

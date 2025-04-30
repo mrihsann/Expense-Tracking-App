@@ -20,6 +20,8 @@ import com.ihsanarslan.expensetrackingapp.ui.detail.DetailScreen
 import com.ihsanarslan.expensetrackingapp.ui.settings.SettingsScreen
 import com.ihsanarslan.expensetrackingapp.ui.tracking.TrackingScreen
 import com.ihsanarslan.expensetrackingapp.ui.add.AddScreen
+import com.ihsanarslan.expensetrackingapp.ui.auth.LoginScreen
+import com.ihsanarslan.expensetrackingapp.ui.auth.RegisterScreen
 
 @Composable
 fun NavigationGraph(
@@ -49,6 +51,12 @@ fun NavigationGraph(
         }
         composable<Add> {
             AddScreen(navController)
+        }
+        composable<Screen.Register> {
+            RegisterScreen(navController)
+        }
+        composable<Screen.Login>{
+            LoginScreen(navController)
         }
     }
 }
