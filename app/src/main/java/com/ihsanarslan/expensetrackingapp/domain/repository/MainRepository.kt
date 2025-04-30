@@ -1,3 +1,0 @@
-package com.ihsanarslan.expensetrackingapp.domain.repository
-
-interface MainRepository
