@@ -1,5 +1,6 @@
 package com.ihsanarslan.expensetrackingapp.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -49,20 +50,23 @@ class HomeViewModel @Inject constructor(
         _isAuthenticated.value = isActive
     }
 
-    fun getAllExpense(){
+    fun getAllExpense() {
         db.getReference("expenses").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
+                val expenses = mutableListOf<Expense>()
                 for (expenseSnapshot in snapshot.children) {
                     val expense = expenseSnapshot.getValue(Expense::class.java)
                     if (expense != null && expense.userId == userId) {
-                        _allExpense.value.plus(expense)
+                        expenses.add(expense)
                     }
                 }
+                _allExpense.value = expenses
             }
 
             override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Veri çekme iptal edildi: ${error.message}")
             }
         })
     }
+
 }
