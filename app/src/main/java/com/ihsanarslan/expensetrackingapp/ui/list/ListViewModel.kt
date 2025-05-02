@@ -1,4 +1,4 @@
-package com.ihsanarslan.expensetrackingapp.ui.home
+package com.ihsanarslan.expensetrackingapp.ui.list
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlin.collections.emptyList
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ListViewModel @Inject constructor(
     private val auth : FirebaseAuth,
     private val db : FirebaseDatabase
 ) : ViewModel() {

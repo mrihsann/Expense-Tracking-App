@@ -20,20 +20,23 @@ class AddViewModel @Inject constructor(
         description: String,
         amount: Double,
     ) {
-
         viewModelScope.launch {
-            val id = db.getReference("expenses").push().key ?: return@launch
+
             val userId = auth.currentUser?.uid ?: return@launch
+            val ref = db.reference.child("expenses").push()
+            val id = ref.key ?: return@launch
+
             val expense = Expense(
                 id = id,
-                userId = userId.toString(),
+                userId = userId,
                 title = title,
                 description = description,
                 amount = amount
             )
 
-            db.reference.child("expenses").push().setValue(expense)
+            ref.setValue(expense)
         }
     }
+
 
 }
