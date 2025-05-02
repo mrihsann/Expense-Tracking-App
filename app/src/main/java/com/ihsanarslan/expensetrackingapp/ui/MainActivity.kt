@@ -19,6 +19,7 @@ import com.ihsanarslan.expensetrackingapp.navigation.Screen
 import com.ihsanarslan.expensetrackingapp.ui.components.BottomBar
 import com.ihsanarslan.expensetrackingapp.ui.theme.MyappTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.reflect.KClass
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -32,19 +33,31 @@ class MainActivity : ComponentActivity() {
                 val startDestination = Screen.Login
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
-                Scaffold (
+
+                // Rota kontrolü için yardımcı fonksiyon
+                fun isCurrentScreen(screen: KClass<out Screen>): Boolean {
+                    return currentDestination?.hierarchy?.any {
+                        it.route?.contains(screen.simpleName ?: "") == true
+                    } == true
+                }
+
+                // Login veya Register sayfalarında olup olmadığımızı kontrol eden fonksiyon
+                val isAuthScreen = isCurrentScreen(Screen.Login::class) || isCurrentScreen(Screen.Register::class)
+
+                Scaffold(
                     topBar = {
-                        val title = when {
-                            currentDestination?.hierarchy?.any { it.route?.contains(Screen.Home::class.simpleName ?: "") == true } == true -> "Home Screen"
-                            currentDestination?.hierarchy?.any { it.route?.contains(Screen.List::class.simpleName ?: "") == true } == true -> "List Screen"
-                            currentDestination?.hierarchy?.any { it.route?.contains(Screen.Settings::class.simpleName ?: "") == true } == true -> "Settings"
-                            currentDestination?.hierarchy?.any { it.route?.contains(Screen.Add::class.simpleName ?: "") == true } == true -> "Add Expense"
-                            currentDestination?.hierarchy?.any { it.route?.contains(Screen.Detail::class.simpleName ?: "") == true } == true -> "Detail"
-                            // Uygulamanızdaki diğer ekranları buraya ekleyebilirsiniz
-                            currentDestination == null -> "Uygulama Adı" // Başlangıç değeri
-                            else -> "Not Found"
-                        }
-                        if(currentDestination?.hierarchy?.any { it.route?.contains(Screen.Login::class.simpleName ?: "") == true } == false || currentDestination?.hierarchy?.any { it.route?.contains(Screen.Register::class.simpleName ?: "") == true } == false){
+                        // Yalnızca Auth sayfalarında değilse TopBar'ı göster
+                        if (!isAuthScreen) {
+                            val title = when {
+                                isCurrentScreen(Screen.Home::class) -> "Home Screen"
+                                isCurrentScreen(Screen.List::class) -> "List Screen"
+                                isCurrentScreen(Screen.Settings::class) -> "Settings"
+                                isCurrentScreen(Screen.Add::class) -> "Add Expense"
+                                isCurrentScreen(Screen.Detail::class) -> "Detail"
+                                // Uygulamanızdaki diğer ekranları buraya ekleyebilirsiniz
+                                else -> "Not Found"
+                            }
+
                             CenterAlignedTopAppBar(
                                 title = {
                                     Text(title)
@@ -53,12 +66,12 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     bottomBar = {
-                        if(currentDestination?.hierarchy?.any { it.route?.contains(Screen.Login::class.simpleName ?: "") == true } == false || currentDestination?.hierarchy?.any { it.route?.contains(Screen.Register::class.simpleName ?: "") == true } == false){
+                        // Yalnızca Auth sayfalarında değilse BottomBar'ı göster
+                        if (!isAuthScreen) {
                             BottomBar(navController)
                         }
                     }
-                ){
-                    innerPadding ->
+                ) { innerPadding ->
                     NavigationGraph(
                         navController = navController,
                         startDestination = startDestination,

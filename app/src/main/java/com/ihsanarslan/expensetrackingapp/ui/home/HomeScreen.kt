@@ -60,6 +60,11 @@ fun HomeScreen(
     }
 
     Column (modifier = Modifier.fillMaxSize()){
+        Button(
+            onClick = {
+                viewModel.signOut()
+            }
+        ) { Text("Oturumu kapat")}
         Card {
             Text("45 Lira")
             Text("Bugün yapılan toplam harcama")
