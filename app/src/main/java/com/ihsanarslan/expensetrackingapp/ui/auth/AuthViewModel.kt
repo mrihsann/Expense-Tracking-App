@@ -3,6 +3,11 @@ package com.ihsanarslan.expensetrackingapp.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.ihsanarslan.expensetrackingapp.data.repository.FirebaseAuthImpl
+import com.ihsanarslan.expensetrackingapp.domain.usecase.CurrentUserUseCase
+import com.ihsanarslan.expensetrackingapp.domain.usecase.SignInWithEmailAndPasswordUseCase
+import com.ihsanarslan.expensetrackingapp.domain.usecase.SignOutUseCase
+import com.ihsanarslan.expensetrackingapp.domain.usecase.SignUpWithEmailAndPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val auth : FirebaseAuth
+    private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
+    private val signUpWithEmailAndPasswordUseCase: SignUpWithEmailAndPasswordUseCase,
+    private val currentUserUseCase: CurrentUserUseCase
 ) : ViewModel() {
 
     private val _isAuthenticated = MutableStateFlow(false)
@@ -27,29 +34,26 @@ class AuthViewModel @Inject constructor(
     fun signUp(email : String, password : String, passwordConfirmation : String){
         viewModelScope.launch {
             if (password == passwordConfirmation) {
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnSuccessListener {
-                        _isAuthenticated.value = true
-                    }
-                    .addOnFailureListener {
-                        _isAuthenticated.value = false
-                    }
+                signUpWithEmailAndPasswordUseCase(email, password).collect{
+                    _isAuthenticated.value = it
+                }
             }
         }
     }
 
     fun signIn(email : String, password : String){
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                _isAuthenticated.value = true
+        viewModelScope.launch {
+            signInWithEmailAndPasswordUseCase(email, password).collect{
+                _isAuthenticated.value = it
             }
-            .addOnFailureListener {
-                _isAuthenticated.value = false
-            }
+        }
     }
 
     private fun isUserAuthenticated() {
-        val isActive = auth.currentUser != null
-        _isAuthenticated.value = isActive
+        viewModelScope.launch {
+            currentUserUseCase.invoke().collect { it ->
+                _isAuthenticated.value = it != null
+            }
+        }
     }
 }

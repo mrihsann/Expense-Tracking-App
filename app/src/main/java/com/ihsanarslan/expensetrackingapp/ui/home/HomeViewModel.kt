@@ -9,6 +9,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.ihsanarslan.expensetrackingapp.domain.model.Expense
+import com.ihsanarslan.expensetrackingapp.domain.usecase.CurrentUserUseCase
+import com.ihsanarslan.expensetrackingapp.domain.usecase.SignOutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +22,9 @@ import kotlin.collections.emptyList
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val auth : FirebaseAuth,
-    private val db : FirebaseDatabase
+    private val db : FirebaseDatabase,
+    private val signOutUseCase: SignOutUseCase,
+    private val currentUserUseCase: CurrentUserUseCase
 ) : ViewModel() {
 
     private val userId = auth.currentUser?.uid ?: "" //8
@@ -40,7 +44,7 @@ class HomeViewModel @Inject constructor(
 
     fun signOut(){
         viewModelScope.launch {
-            auth.signOut()
+            signOutUseCase()
             _isAuthenticated.value = false
         }
     }
