@@ -24,9 +24,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.ihsanarslan.expensetrackingapp" />
-                  <option name="mobileSdkAppId" value="1:11424602327:android:1acb93d71190b33e02b892" />
-                  <option name="projectId" value="expense-tracking-8b5f1" />
-                  <option name="projectNumber" value="11424602327" />
+                  <option name="mobileSdkAppId" value="1:1024765406097:android:b51fe2d124997a77ac8830" />
+                  <option name="projectId" value="expense-tracking-app-f3439" />
+                  <option name="projectNumber" value="1024765406097" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

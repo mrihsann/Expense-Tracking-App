@@ -1,19 +1,10 @@
 package com.ihsanarslan.expensetrackingapp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Auth
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Home
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Detail
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Settings
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Tracking
-import com.ihsanarslan.expensetrackingapp.navigation.Screen.Add
 import com.ihsanarslan.expensetrackingapp.ui.auth.AuthScreen
 import com.ihsanarslan.expensetrackingapp.ui.home.HomeScreen
 import com.ihsanarslan.expensetrackingapp.ui.detail.DetailScreen
@@ -35,22 +26,22 @@ fun NavigationGraph(
         navController = navController,
         startDestination = startDestination,
     ) {
-        composable<Auth> {
+        composable<Screen.Auth> {
             AuthScreen(navController)
         }
-        composable<Home> {
+        composable<Screen.Home> {
             HomeScreen(navController)
         }
-        composable<Detail> {
+        composable<Screen.Detail> {
             DetailScreen(navController)
         }
-        composable<Settings> {
+        composable<Screen.Settings> {
             SettingsScreen(navController)
         }
-        composable<Tracking> {
+        composable<Screen.Tracking> {
             TrackingScreen(navController)
         }
-        composable<Add> {
+        composable<Screen.Add> {
             AddScreen(navController)
         }
         composable<Screen.Register> {
