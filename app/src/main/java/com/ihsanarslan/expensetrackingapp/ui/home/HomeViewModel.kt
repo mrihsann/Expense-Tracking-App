@@ -15,71 +15,89 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.collections.emptyList
+import java.util.*
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val auth : FirebaseAuth,
-    private val db : FirebaseDatabase,
-    private val signOutUseCase: SignOutUseCase,
+    private val db: FirebaseDatabase,
     private val currentUserUseCase: CurrentUserUseCase
 ) : ViewModel() {
-
-    private val userId = auth.currentUser?.uid ?: "" //8
 
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean>
         get() = _isAuthenticated.asStateFlow()
 
-    private val _allExpense = MutableStateFlow<List<Expense>>(emptyList())
-    val allExpense: StateFlow<List<Expense>>
-        get() = _allExpense.asStateFlow()
+    private val _expenses = MutableStateFlow<List<Expense>>(emptyList())
+    val expenses: StateFlow<List<Expense>>
+        get() = _expenses.asStateFlow()
+
+    private val _dailyTotal = MutableStateFlow(0.0)
+    val dailyTotal: StateFlow<Double>
+        get() = _dailyTotal.asStateFlow()
 
     init {
         isUserAuthenticated()
         getAllExpense()
     }
 
-    fun signOut(){
+    fun isUserAuthenticated() {
         viewModelScope.launch {
-            signOutUseCase()
-            _isAuthenticated.value = false
+            val isActive = currentUserUseCase().first() != null
+            _isAuthenticated.value = isActive
         }
-    }
-
-    fun isUserAuthenticated(){
-        val isActive = auth.currentUser != null
-        _isAuthenticated.value = isActive
     }
 
     private fun getAllExpense() {
-        db.getReference("expenses").addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        viewModelScope.launch {
+            val userId = currentUserUseCase().first()?.uid ?: return@launch
 
-                val expenses = mutableListOf<Expense>()
+            db.getReference("expenses").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
 
-                for (data in snapshot.children) {
+                    val expenses = mutableListOf<Expense>()
 
-                    val expense = data.getValue(Expense::class.java)
+                    for (data in snapshot.children) {
 
-                    if (expense != null && expense.userId == userId) {
-                        expenses.add(expense)
+                        val expense = data.getValue(Expense::class.java)
+
+                        if (expense != null && expense.userId == userId) {
+                            expenses.add(expense)
+                        }
                     }
-                }
-                _allExpense.value = expenses
-            }
+                    _expenses.value = expenses
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("Firebase", "Veri çekme iptal edildi: ${error.message}")
-            }
-        })
+                    // Veriler yüklendikten SONRA günlük toplamı hesapla
+                    calculateDailyTotal(expenses)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Veri çekme iptal edildi: ${error.message}")
+                }
+            })
+        }
     }
 
-    fun deleteExpense(expenseId: String) {
-        viewModelScope.launch {
-            db.getReference("expenses").child(expenseId).removeValue()
-        }
+
+
+
+    private fun calculateDailyTotal(expenses: List<Expense>) {
+        val startOfDay = getStartOfDay()
+        val total = expenses
+            .filter { it.date!!.after(startOfDay) }
+            .sumOf { it.amount!! }
+
+        _dailyTotal.value = total
+    }
+
+    private fun getStartOfDay(): Date {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        return calendar.time
     }
 }

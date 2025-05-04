@@ -5,8 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -61,6 +67,20 @@ class MainActivity : ComponentActivity() {
                             CenterAlignedTopAppBar(
                                 title = {
                                     Text(title)
+                                },
+                                navigationIcon = {
+                                    if (!isCurrentScreen(Screen.Home::class)){
+                                        IconButton(
+                                            onClick = {
+                                                navController.navigateUp()
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.ArrowBackIosNew,
+                                                contentDescription = "Back"
+                                            )
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -68,7 +88,23 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         // Yalnızca Auth sayfalarında değilse BottomBar'ı göster
                         if (!isAuthScreen) {
-                            BottomBar(navController)
+                            if (!isCurrentScreen(Screen.List::class)){
+                                BottomBar(navController)
+                            }
+                        }
+                    },
+                    floatingActionButton = {
+                        if (isCurrentScreen(Screen.List::class)) {
+                            FloatingActionButton(
+                                onClick = {
+                                    navController.navigate(Screen.Add)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Expense"
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->

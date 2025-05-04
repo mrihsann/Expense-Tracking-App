@@ -38,13 +38,6 @@ class ListViewModel @Inject constructor(
         getAllExpense()
     }
 
-    fun signOut(){
-        viewModelScope.launch {
-            auth.signOut()
-            _isAuthenticated.value = false
-        }
-    }
-
     fun isUserAuthenticated(){
         val isActive = auth.currentUser != null
         _isAuthenticated.value = isActive

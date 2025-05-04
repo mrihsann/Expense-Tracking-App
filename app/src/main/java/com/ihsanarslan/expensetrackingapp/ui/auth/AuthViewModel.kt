@@ -2,11 +2,8 @@ package com.ihsanarslan.expensetrackingapp.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.ihsanarslan.expensetrackingapp.data.repository.FirebaseAuthImpl
 import com.ihsanarslan.expensetrackingapp.domain.usecase.CurrentUserUseCase
 import com.ihsanarslan.expensetrackingapp.domain.usecase.SignInWithEmailAndPasswordUseCase
-import com.ihsanarslan.expensetrackingapp.domain.usecase.SignOutUseCase
 import com.ihsanarslan.expensetrackingapp.domain.usecase.SignUpWithEmailAndPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +22,6 @@ class AuthViewModel @Inject constructor(
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean>
         get() = _isAuthenticated.asStateFlow()
-
 
     init {
         isUserAuthenticated()
@@ -51,7 +47,7 @@ class AuthViewModel @Inject constructor(
 
     private fun isUserAuthenticated() {
         viewModelScope.launch {
-            currentUserUseCase.invoke().collect { it ->
+            currentUserUseCase().collect { it ->
                 _isAuthenticated.value = it != null
             }
         }
