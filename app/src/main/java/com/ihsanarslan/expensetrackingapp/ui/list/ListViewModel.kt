@@ -10,6 +10,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.ihsanarslan.expensetrackingapp.domain.model.Expense
 import com.ihsanarslan.expensetrackingapp.domain.usecase.CurrentUserUseCase
+import com.ihsanarslan.expensetrackingapp.util.Constants.REFS_EXPENSES
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +50,7 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch {
             val userId = currentUserUseCase().first()?.uid ?: return@launch
 
-            db.getReference("expenses").addValueEventListener(object : ValueEventListener {
+            db.getReference(REFS_EXPENSES).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
                     val expenses = mutableListOf<Expense>()
@@ -74,7 +75,7 @@ class ListViewModel @Inject constructor(
 
     fun deleteExpense(expenseId: String) {
         viewModelScope.launch {
-            db.getReference("expenses").child(expenseId).removeValue()
+            db.getReference(REFS_EXPENSES).child(expenseId).removeValue()
         }
     }
 }

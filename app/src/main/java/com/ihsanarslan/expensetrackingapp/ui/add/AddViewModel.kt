@@ -6,6 +6,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.ihsanarslan.expensetrackingapp.domain.model.Expense
 import com.ihsanarslan.expensetrackingapp.domain.model.ExpenseCategory
 import com.ihsanarslan.expensetrackingapp.domain.usecase.CurrentUserUseCase
+import com.ihsanarslan.expensetrackingapp.util.Constants
+import com.ihsanarslan.expensetrackingapp.util.Constants.REFS_EXPENSES
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -28,7 +30,7 @@ class AddViewModel @Inject constructor(
         viewModelScope.launch {
 
             val userId = currentUserUseCase().first()?.uid ?: return@launch
-            val ref = db.reference.child("expenses").push()
+            val ref = db.reference.child(REFS_EXPENSES).push()
             val id = ref.key ?: return@launch
 
             val expense = Expense(
