@@ -87,4 +87,7 @@ dependencies {
 
     //Icons Library
     implementation("androidx.compose.material:material-icons-extended:$2024.05.00")
+
+    // Charts Library
+    implementation (libs.compose.charts)
 }

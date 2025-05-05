@@ -1,8 +1,7 @@
 package com.ihsanarslan.expensetrackingapp.di
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import com.ihsanarslan.expensetrackingapp.data.repository.FirebaseAuthImpl
+import com.ihsanarslan.expensetrackingapp.data.remote.repository.FirebaseAuthImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
