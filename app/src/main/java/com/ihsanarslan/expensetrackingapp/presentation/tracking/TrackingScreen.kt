@@ -41,7 +41,7 @@ fun TrackingScreen(
 ) {
 
     Box (Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        LineChart(
+         LineChart(
             modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).padding(horizontal = 22.dp),
             data = remember {
                 listOf(

@@ -90,4 +90,7 @@ dependencies {
 
     // Charts Library
     implementation (libs.compose.charts)
+
+    // Data Store
+    implementation(libs.datastore.preferences)
 }
