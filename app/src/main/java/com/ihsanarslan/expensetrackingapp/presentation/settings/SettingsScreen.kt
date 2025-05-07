@@ -37,6 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ihsanarslan.expensetrackingapp.navigation.Screen
 import com.ihsanarslan.expensetrackingapp.presentation.settings.components.SettingsItem
@@ -46,8 +48,9 @@ import com.ihsanarslan.expensetrackingapp.presentation.settings.components.Setti
 fun SettingsScreen(
     navController: NavController
 ) {
+    val viewModel = hiltViewModel<SettingsViewModel>()
 
-    var darkMode by remember { mutableStateOf(false) }
+    var darkMode = viewModel.isDarkMode.collectAsStateWithLifecycle()
     var selectedCurrency by remember { mutableStateOf("TRY") }
     var showLogoutDialog by remember { mutableStateOf(false) }
 
@@ -126,8 +129,10 @@ fun SettingsScreen(
             subtitle = "Uygulamayı karanlık temada kullan",
             trailingContent = {
                 Switch(
-                    checked = darkMode,
-                    onCheckedChange = { darkMode = it },
+                    checked = darkMode.value,
+                    onCheckedChange = {
+                        viewModel.setDarkMode(it)
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.primary,
                         checkedTrackColor = MaterialTheme.colorScheme.primaryContainer

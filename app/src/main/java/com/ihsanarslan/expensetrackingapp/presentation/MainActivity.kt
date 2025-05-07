@@ -17,12 +17,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ihsanarslan.expensetrackingapp.navigation.NavigationGraph
 import com.ihsanarslan.expensetrackingapp.navigation.Screen
 import com.ihsanarslan.expensetrackingapp.presentation.components.BottomBar
+import com.ihsanarslan.expensetrackingapp.presentation.settings.SettingsViewModel
 import com.ihsanarslan.expensetrackingapp.ui.theme.MyappTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.reflect.KClass
@@ -34,7 +37,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MyappTheme {
+
+            val viewModel = hiltViewModel<SettingsViewModel>()
+            val isDarkMode = viewModel.isDarkMode.collectAsStateWithLifecycle()
+
+            MyappTheme(
+                darkTheme = isDarkMode.value
+            ) {
                 val navController = rememberNavController()
                 val startDestination = Screen.Login
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
